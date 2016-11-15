@@ -556,10 +556,15 @@ EOF;
 
     $database = $this->siteclass->getDbName(); 
 
-    $this->siteclass->query("select count(*) from information_schema.tables ".
-                 "where (table_schema = '$database') and (table_name = 'site')");
+    if(!$this->noTrack) {
+      $this->siteclass->query("select count(*) from information_schema.tables ".
+                              "where (table_schema = '$database') and (table_name = 'site')");
 
-    list($ok) = $this->siteclass->fetchrow('num');
+      list($ok) = $this->siteclass->fetchrow('num');
+    } else {
+      $ok = true;
+    }
+    
     if(!$ok) {
       error_log("$this->siteclass->siteName: Did not find 'site'");
       return false;

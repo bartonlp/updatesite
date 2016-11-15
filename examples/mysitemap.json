@@ -1,0 +1,23 @@
+{
+    "siteDomain": "example.com",
+    "siteName": "Heidi",
+    "copyright": "2016 Barton L. Phillips and Heidi Kemmer",
+    "className": "SiteClass",
+    "dbinfo": {
+        "host": "localhost",
+        "user": "barton",
+        "password": "7098653",
+        "database": "test.sdb",
+        "engine": "sqlite3"
+    },
+    "headFile": "./head.i.php",
+    "bannerFile": "./banner.i.php",
+    "footerFile": "./footer.i.php",
+    "noTrack": true,
+    "count": false,
+    "countMe": false,
+    "myUri": "bartonphillips.dyndns.org",
+    "EMAILADDRESS": "bartonphillips@gmail.com",
+    "EMAILRETURN": "bartonphillips@gmail.com",
+    "EMAILFROM": "webmaster@bartonlp.com"
+}

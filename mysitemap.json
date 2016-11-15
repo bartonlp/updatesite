@@ -1,0 +1,29 @@
+{
+    "siteDomain": "www.bartonlp.com/heidi",
+    "emailDomain": "bartonlp.com",
+    "siteName": "Heidi",
+    "copyright": "2016 Barton L. Phillips and Heidi Kemmer",
+    "className": "SiteClass",
+    "memberTable": "heidi",
+    "path": "/var/www/bartonlp/heidi",
+    "masterdb": "barton",
+    "dbinfo": {
+        "host": "localhost",
+        "user": "barton",
+        "password": "7098653",
+        "database": "heidi",
+        "engine": "mysqli"
+    },
+    "headFile": "/var/www/bartonlp/heidi/includes/head.i.php",
+    "bannerFile": "/var/www/bartonlp/heidi/includes/banner.i.php",
+    "footerFile": "/var/www/bartonlp/heidi/includes/footer.i.php",
+    "count": true,
+    "countMe": true,
+    "analysis": true,
+    "trackerImg1": "/images/blank.png",
+    "trackerImg2": "/images/blank.png",
+    "myUri": "bartonphillips.dyndns.org",
+    "EMAILADDRESS": "bartonphillips@gmail.com",
+    "EMAILRETURN": "bartonphillips@gmail.com",
+    "EMAILFROM": "webmaster@bartonlp.com"
+}
