@@ -1,10 +1,11 @@
 <?php
 // You should put 'SetEnv SITELOAD=<path_to_site-class_includes>' in your .htaccess file
 $_site = require_once(getenv("SITELOAD"). "/siteload.php");
+ErrorClass::setNoEmailErrs(true);
+ErrorClass::setDevelopment(true);
 $S = new $_site->className($_site);
 
 // START UpdateSite PresidentMsg "President's Message"
-// // START UpdateSite OtherStuff
 // START UpdateSite International
 // START UpdateSite Leadership
 
@@ -30,7 +31,7 @@ EOF;
 $s->itemname = "PresidentMsg";
 
 $item = $u->getItem($s);
-vardump($item);
+
 if($item !== false) {
   $presidentmsg = <<<EOF
 <div>

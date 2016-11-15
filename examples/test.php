@@ -1,6 +1,8 @@
 <?php
 // You should put 'SetEnv SITELOAD=<path_to_site-class_includes>' in your .htaccess file
 $_site = require_once(getenv("SITELOAD"). "/siteload.php");
+ErrorClass::setNoEmailErrs(true);
+ErrorClass::setDevelopment(true);
 $S = new $_site->className($_site);
 
 // START UpdateSite Message
@@ -24,6 +26,7 @@ if($item !== false) {
 <p class="itemdate">Created: {$item['date']}</p>
 </div>
 <hr/>
+
 EOF;
 }
 
@@ -31,6 +34,7 @@ list($top, $footer) = $S->getPageTopBottom();
 
 echo <<<EOF
 $top
+<h1>TEST</h1>
 $message
 $footer
 EOF;

@@ -1,6 +1,8 @@
 <?php
 // You should put 'SetEnv SITELOAD=<path_to_site-class_includes>' in your .htaccess file
 $_site = require_once(getenv("SITELOAD"). "/siteload.php");
+ErrorClass::setNoEmailErrs(true);
+ErrorClass::setDevelopment(true);
 $S = new $_site->className($_site);
 
 $h->extra = <<<EOF
@@ -44,11 +46,8 @@ jQuery(document).ready(function() {
 });
   </script>
 EOF;
-$h->title = "Update Site For Granby Rotary";
-$h->title = "Update Site Admin for Granby Rotary";
-$h->banner = "<h1>Update Site Admin For Granby Rotary</h1>";
+$h->title = "UpdateSite Admin";
+$h->title = "UpdateSite Admin";
+$h->banner = "<h1>UpdateSite Admin</h1>";
 
-$s->site = "heidi";
-
-UpdateSite::secondHalf($S, $h, $s);
-
+UpdateSite::secondHalf($S, $h);

@@ -293,9 +293,10 @@ EOF;
 
     return <<<EOF
 $top
+<div id="firsthalf-wrapper">
 <h2>Select Site Information</h2>
 <form action="$nextfilename" method="post">
-<table>
+<table id="firsthalf-tbl>
 <tr><th>Select Page</th><td id="pageselect">
 <select name="pagename">
 $pagenames
@@ -308,6 +309,7 @@ $firstitem
 </td></tr>
 </table>
 <input type="submit" value="Continue" />
+</div>
 </form>
 $footer
 EOF;
@@ -466,7 +468,7 @@ EOF;
     if($type) {
       $itemname = "";
       if($this->itemname) {
-        $itemname = " && itemname='$this->itemname'";
+        $itemname = " and itemname='$this->itemname'";
       }
     }
 
@@ -477,6 +479,8 @@ EOF;
     $rows = array();
 
     while($row = $this->siteclass->fetchrow()) {
+      if(!$row) return false;
+      
       array_push($rows, $row);
     }
     return $rows;
@@ -506,6 +510,8 @@ EOF;
     $n = $this->siteclass->query($query);
     if(!$n) return false;
     list($status) = $this->siteclass->fetchrow();
+    if(!$status) return false;
+    
     return $status;
   }
 
@@ -525,6 +531,8 @@ EOF;
     if(!$n) return false;
 
     $row = $this->siteclass->fetchrow();
+    if(!$row) return false;
+    
     extract($row);
 
     return array($title, $bodytext, $status, $date, title=>$title, bodytext=>$bodytext, status=>$status, date=>$date);
@@ -551,18 +559,18 @@ EOF;
     
     $itemname = "";
     if($item) {
-      $itemname = " && itemname='$item'";
+      $itemname = " and itemname='$item'";
     }
 
     $database = $this->siteclass->getDbName(); 
 
-    if(!$this->noTrack) {
+    if($this->siteclass->noTrack === true) {
+      $ok = true;
+    } else {
       $this->siteclass->query("select count(*) from information_schema.tables ".
                               "where (table_schema = '$database') and (table_name = 'site')");
 
       list($ok) = $this->siteclass->fetchrow('num');
-    } else {
-      $ok = true;
     }
     
     if(!$ok) {
@@ -570,8 +578,8 @@ EOF;
       return false;
     }
 
-    $query = "select * from site where page='$page' $itemname && ".
-             "date=(select max(date) from site where status='active' && page='$page' $itemname)";
+    $query = "select * from site where page='$page' $itemname and ".
+             "date=(select max(date) from site where status='active' and page='$page' $itemname)";
 
     try {
       $n = $this->siteclass->query($query);
@@ -601,7 +609,8 @@ EOF;
     }
     
     $row = $this->siteclass->fetchrow();
-
+    if(!$row) return false;
+    
     extract($row);
 
     return array($title, $bodytext, $status, $date, $id, 'title'=>$title, 'bodytext'=>$bodytext, 'status'=>$status, 'date'=>$date, 'id'=>$id);
@@ -672,14 +681,18 @@ EOF;
       $$k = $v; // make the variables like extract() does.
     }
 
-// BLP    $memberid = $this->siteclass->getId(); // Get the id of the member who posted this.
-
+    if(method_exists($this->siteclass, 'getId')) {
+      $memberid = $this->siteclass->getId(); // Get the id of the member who posted this.
+    }
+    
+    $date = date("Y-m-d H:i:s");
+    
     try {
       if($id) {
-        $query = "update site set title='$title', bodytext='$bodytext', status='active', date=now() where id='$id'";
+        $query = "update site set title='$title', bodytext='$bodytext', status='active', date=$date where id='$id'";
       } else {
         $query = "insert into site (page, itemname, title, bodytext, date, creator) " .
-                 "values('$this->page', '$this->itemname', '$title', '$bodytext', now(), '$memberid')";
+                 "values('$this->page', '$this->itemname', '$title', '$bodytext', '$date', '$memberid')";
       }
 
       $this->siteclass->query($query);
@@ -710,15 +723,15 @@ EOF;
     if(!$id) {
       $id = $this->siteclass->getLastInsertId();
     }
-    
+
     // Now make all other items inactive
     $itemname = "";
     if($this->itemname) {
-      $itemname = " && itemname='$this->itemname'";
+      $itemname = " and itemname='$this->itemname'";
     }
 
     $this->siteclass->query("update site set status='inactive' where " .
-                 "page='$this->page' $itemname && id!='$id'");
+                 "page='$this->page' $itemname and id!='$id'");
   }
 
   // ********************************************************************************
@@ -750,11 +763,12 @@ EOF;
 
     echo <<<EOF
 $this->top
-<div style="width: 100%">
+<div id="startpage-wrapper">
 $form
+<br>
+<a href="$this->self?page=list&type=edit&pagename={$this->page}&itemname={$this->itemname}">
+  List All Items and Select Item to Edit</a>
 </div>
-<br/>
-<a href="$this->self?page=list&type=edit&pagename={$this->page}&itemname={$this->itemname}">List All Items and Select Item to Edit</a><br>
 $this->footer
 EOF;
   }
@@ -779,10 +793,12 @@ EOF;
       $bodytext = urlencode($bodytext);
       echo <<<EOF
 $this->top
+<div id="previewpage-wrapper">
 <h2>Preview Not Available</h2>
 <p>Do you want to
-<a href="$self?page=post&id=$id&site=$this->site&pagename=$page&itemname=$itemname&title=$title&bodytext=$bodytext">Post</a>
+<a href="$self?page=post&id=$id&pagename=$page&itemname=$itemname&title=$title&bodytext=$bodytext">Post</a>
 anyway?</p>
+</div>
 $this->footer
 EOF;
     }
@@ -798,8 +814,10 @@ EOF;
     $self = $this->siteclass->self;
     echo <<<EOF
 $this->top
+<div id="postpage-wrapper">
 <h1>Posted</h1>
 <a href="$self?page=show&pagename=$this->page&itemname=$this->itemname">Show Results</a>
+</div>
 $this->footer
 EOF;
   }
@@ -823,11 +841,13 @@ EOF;
     }
     echo <<<EOF
 $this->top
+<div id="showpage-wrapper">
 $status
-<table border="1">
+<table id="showpage-tbl" border="1">
 <tr><th>Title</th><td style="padding: 5px;">$title</td></tr>
 <tr><th>Body&nbsp;Text</th><td style="padding: 5px;">$bodytext</td></tr>
 </table>
+</div>
 $this->footer
 EOF;
   }
@@ -869,7 +889,7 @@ EOF;
     }
     
     $rows = $this->getItems();
-    $tbl = "<table border='1'>\n";
+    $tbl = "<table id='listitemspage-tbl' border='1'>\n";
     $self = $this->siteclass->self;
 
     // NOTE: if type=status then in the <a below the page= becomes status.
@@ -881,8 +901,10 @@ EOF;
     $tbl .= "</table>\n";
     echo <<<EOF
 $this->top
+<div id="listitemspage-wrapper">
 $maintitle
 $tbl
+</div>
 $this->footer
 EOF;
   }
@@ -899,10 +921,15 @@ EOF;
   public function admin() {
     $n = $this->siteclass->query("select * from site");
     if(!$n) {
-      echo "NO Records Fount for $this->site";
+      echo "NO Records Fount";
       exit();
     }
     while($row = $this->siteclass->fetchrow('assoc')) {
+      if(!$row) {
+        echo "NO Records Fount";
+        exit();
+      }
+        
       extract($row);
 
       $tbl .= <<<EOF
@@ -920,9 +947,10 @@ EOF;
 
     echo <<<EOF
 $this->top
+<div id="admin-wrapper">
 <form action="$this->self" method="post">
 <p>Action: make <b>A</b>tive, <b>I</b>nactive, <b>D</b>eleted.</p>
-<table border="1">
+<table id="admin-tbl" border="1">
 <thead>
 <tr><th>Status</th><th>Action</th><th>Page</th><th>Section</th><th>Title</th><th>Date</th></tr>
 </thead>
@@ -946,6 +974,7 @@ jQuery(document).ready(function($) {
   });
 });
 </script>
+</div>
 $this->footer
 EOF;
   }
@@ -956,7 +985,6 @@ EOF;
    */
   
   public function adminpost() {
-    //vardump("POST", $_POST);
     extract($_POST);
 
     if($active) {
@@ -987,8 +1015,10 @@ EOF;
     
     echo <<<EOF
 $this->top
+<div id="adminpost-wrapper">
 <p>The selected items have been updated. Items marked as <b>delete</b> have been marked but not yet removed.
 To remove those items click <a href="$this->self?page=admindelete">Expunge Items Marked <i>delete</i></a>.</p>
+</div>
 $this->footer
 EOF;
   }
@@ -1002,8 +1032,10 @@ EOF;
     $this->siteclass->query("delete from site where status='delete'");
     echo <<<EOF
 $this->top
+<div id="admindelete-wrapper">
 <h2>Items Deleted</h2>
 <p><a href="$this->self?page=admin">Return to Admin</a></p>
+</div>
 $this->footer
 EOF;
   }

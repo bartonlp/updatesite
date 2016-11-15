@@ -1,12 +1,14 @@
 <?php
 // You should put 'SetEnv SITELOAD=<path_to_site-class_includes>' in your .htaccess file
 $_site = require_once(getenv("SITELOAD"). "/siteload.php");
+ErrorClass::setNoEmailErrs(true);
+ErrorClass::setDevelopment(true);
 $S = new $_site->className($_site);
 
 // Get site info
 
-$h->title = "Update Site For Granby Rotary";
-$h->banner = "<h1>Update Site For Granby Rotary</h1>";
+$h->title = "UpdateSite";
+$h->banner = "<h1>UpdateSite</h1>";
 
 // UpdateSite::firstHalf() is a static member.
 // UpdateSite::firstHalf($S, $h, [$nextfilename]);
