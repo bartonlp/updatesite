@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Main Readme file</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+
+<style>
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
+pre.sourceCode {
+  background-color: #EEF3E2;
+  border-left: 10px solid gray;
+  padding: 5px;
+}
+code {
+  background-color: #EEF3E2;
+}
+</style>
+  </style>
+</head>
+<body>
+<h1 id="updatesite-class">UpdateSite Class</h1>
+<p>This is a PHP Class with a little JavaScript thrown in.</p>
+<p>This class works with <a href="https://github.com/bartonlp/site-class">SiteClass</a>. <strong>SiteClass</strong> documentation can be found at <a href="https://bartonlp.github.io/site-class">SiteClass Documentation</a>.</p>
+<p>The class can be used to insert sections into a website from a database. The sections can be edited and administered via the web.</p>
+<p><strong>This is still a work in progress and is not stable.</strong></p>
+<h2 id="how-it-works">How It Works</h2>
+<p>The sections are stored in a database. Currently there are two databases the <strong>SiteClass</strong> supports:</p>
+<ul>
+<li>MySql. This uses the most current PHP library (mysqli)<br /></li>
+<li>Sqlite2. This is not as well tested but should work with <strong>UpdateSite</strong></li>
+</ul>
+<p>The database schema looks like this:</p>
+<pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">CREATE</span> <span class="kw">TABLE</span> `site` (
+  `id` <span class="dt">int</span>(<span class="dv">11</span>) <span class="kw">NOT</span> <span class="kw">NULL</span> AUTO_INCREMENT,
+  `page` <span class="dt">varchar</span>(<span class="dv">255</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,
+  `itemname` <span class="dt">varchar</span>(<span class="dv">255</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,
+  `title` <span class="dt">varchar</span>(<span class="dv">255</span>) <span class="kw">DEFAULT</span> <span class="kw">NULL</span>,
+  `bodytext` text,
+  `date` datetime <span class="kw">DEFAULT</span> <span class="kw">NULL</span>,
+  `status` enum(<span class="st">&#39;active&#39;</span>,<span class="st">&#39;inactive&#39;</span>,<span class="st">&#39;delete&#39;</span>) <span class="kw">DEFAULT</span> <span class="st">&#39;active&#39;</span>,
+  `lasttime` <span class="dt">timestamp</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="fu">CURRENT_TIMESTAMP</span> <span class="kw">ON</span> <span class="kw">UPDATE</span> <span class="fu">CURRENT_TIMESTAMP</span>,
+  `creator` <span class="dt">varchar</span>(<span class="dv">255</span>) <span class="kw">DEFAULT</span> <span class="kw">NULL</span>,
+  <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (`id`)
+) ENGINE=MyISAM <span class="kw">DEFAULT</span> CHARSET=utf8;</code></pre>
+<p>This is the schema for MySql.</p>
+<p>The 'creator' field is only used if you have extended the <strong>SiteClass</strong> to handel members.</p>
+<p>You can create a webpage as follows:</p>
+<pre class="sourceCode php"><code class="sourceCode php">// test.php
+
+$_site = require_once(getenv(&quot;SITELOAD&quot;). &quot;/siteload.php&quot;);
+$S = new $_site-&gt;className($_site);
+
+// The following comment is needed by UpdateSite.
+// This must be at the beginning of the line and have the words &#39;START UpdateSite&#39; 
+// followed ma the name of the database item. This can be anywhere in the file but
+// I like to put it close the the invocation of UpdateSite.
+
+// START UpdateSite Message
+// START UpdateSite AnotherMessage
+
+$s-&gt;siteclass = $S; // This is the SiteClass object or one of its children
+$s-&gt;site = &quot;heidi&quot;; // The name of the site. Can be any name
+$s-&gt;page = &quot;test.php&quot;; // The name of the page
+$s-&gt;itemname =&quot;Message&quot;; // The name of the database item
+
+$u = new UpdateSite($s); // instantiate the class
+
+$item = $u-&gt;getItem(); // gets the item in &#39;itemname&#39;. You can set a different value and then call with $s.
+
+// If item is false then no active item in table
+
+if($item !== false) {
+  $message = &lt;&lt;&lt;EOF
+&lt;div&gt;
+&lt;h2&gt;{$item[&#39;title&#39;]}&lt;/h2&gt;
+&lt;div&gt;{$item[&#39;bodytext&#39;]}&lt;/div&gt;
+&lt;p class=&quot;itemdate&quot;&gt;Created: {$item[&#39;date&#39;]}&lt;/p&gt;
+&lt;/div&gt;
+&lt;hr/&gt;
+EOF;
+}
+
+$s-&gt;itemname = &quot;AnotherMessage&quot;;
+
+$item = $u-&gt;getItem($s); 
+
+if($item !== false) {
+  $anotherMessage = &lt;&lt;&lt;EOF
+&lt;div&gt;
+&lt;h2&gt;{$item[&#39;title&#39;]}&lt;/h2&gt;
+&lt;div&gt;{$item[&#39;bodytext&#39;]}&lt;/div&gt;
+&lt;p class=&quot;itemdate&quot;&gt;Created: {$item[&#39;date&#39;]}&lt;/p&gt;
+&lt;/div&gt;
+&lt;hr/&gt;
+EOF;
+}
+
+// Use SiteClass to get the top and footer
+
+list($top, $footer) = $S-&gt;getPageTopBottom();
+
+echo &lt;&lt;&lt;EOF
+$top
+&lt;h1&gt;Example 1&lt;/h1&gt;
+$message
+$anotherMessage
+$footer
+EOF;</code></pre>
+<p>If you run this example it will show no messages.</p>
+<h2 id="create-the-database-entries.-selection">Create the Database Entries. Selection</h2>
+<p>To create the database entries you can run the following program.</p>
+<pre class="sourceCode php"><code class="sourceCode php"><span class="kw">&lt;?php</span>
+<span class="co">// testupdatecreate.php</span>
+
+<span class="kw">$_site</span> = <span class="kw">require_once</span><span class="ot">(</span><span class="fu">getenv</span><span class="ot">(</span><span class="st">&quot;SITELOAD&quot;</span><span class="ot">)</span>. <span class="st">&quot;/siteload.php&quot;</span><span class="ot">);</span>
+<span class="kw">$S</span> = <span class="kw">new</span> <span class="kw">$_site</span>-&gt;className<span class="ot">(</span><span class="kw">$_site</span><span class="ot">);</span>
+
+<span class="co">// Get site info</span>
+
+<span class="kw">$h</span>-&gt;title = <span class="st">&quot;Update Site For Granby Rotary&quot;</span><span class="ot">;</span>
+<span class="kw">$h</span>-&gt;banner = <span class="st">&quot;&lt;h1&gt;Update Site For Granby Rotary&lt;/h1&gt;&quot;</span><span class="ot">;</span>
+
+<span class="co">// UpdateSite::firstHalf() is a static member.</span>
+<span class="co">// UpdateSite::firstHalf($S, $h, [$nextfilename]);</span>
+<span class="co">// The third parameter is optional.</span>
+<span class="co">// $nextfilename can be set if we want a file other than the default which is &quot;/updatesite2.php&quot;.</span>
+
+<span class="kw">$page</span> = UpdateSite::firstHalf<span class="ot">(</span><span class="kw">$S</span><span class="ot">,</span> <span class="kw">$h</span><span class="ot">,</span> <span class="st">&#39;testupdatesite2.php&#39;</span><span class="ot">);</span>
+
+<span class="fu">echo</span> <span class="kw">&lt;&lt;&lt;EOF</span>
+<span class="kw">$page</span>
+<span class="st">&lt;br&gt;</span>
+<span class="st">&lt;a href=&quot;testupdateadmin.php&quot;&gt;Administer Update Site Table&lt;/a&gt;&lt;br/&gt;</span>
+<span class="kw">$footer</span>
+<span class="kw">EOF;</span></code></pre>
+<p><img src="image1.png" alt="Screenshot of testupdatecreate.php" /></p>
+<p>This is the first half of the creation program. As you can see the two drop downs are locked together by JavaScript. You can select the page (the name of the webpage you created) and then select the database item you want to edit.</p>
+<h2 id="edit-the-selection">Edit the Selection</h2>
+<p>The second screen lets you edit the selected item.</p>
+<pre class="sourceCode php"><code class="sourceCode php"><span class="kw">&lt;?php</span>
+<span class="co">// testupdatesite2.php</span>
+
+<span class="kw">$_site</span> = <span class="kw">require_once</span><span class="ot">(</span><span class="fu">getenv</span><span class="ot">(</span><span class="st">&quot;SITELOAD&quot;</span><span class="ot">)</span>. <span class="st">&quot;/siteload.php&quot;</span><span class="ot">);</span>
+<span class="kw">$S</span> = <span class="kw">new</span> <span class="kw">$_site</span>-&gt;className<span class="ot">(</span><span class="kw">$_site</span><span class="ot">);</span>
+   
+<span class="kw">$h</span>-&gt;title = <span class="st">&quot;Update Site For Heidi&quot;</span><span class="ot">;</span>
+<span class="kw">$h</span>-&gt;banner = <span class="st">&quot;&lt;h1&gt;Update Site Admin For Granby Rotary&lt;/h1&gt;&quot;</span><span class="ot">;</span>
+<span class="kw">$h</span>-&gt;extra = <span class="kw">&lt;&lt;&lt;EOF</span>
+<span class="st">  &lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js&quot;&gt;&lt;/script&gt;</span>
+<span class="st">  &lt;script type=&quot;text/javascript&quot;&gt;</span>
+<span class="st">jQuery(document).ready(function() {</span>
+<span class="st">  var auto = 1;</span>
+
+<span class="st">  $(&quot;#updatesiteform #formtablesubmitth input&quot;)</span>
+<span class="st">  .after(&quot;&lt;input type=&#39;button&#39; id=&#39;render&#39; style=&#39;display: none&#39; value=&#39;Quick Preview&#39;/&gt;&quot; +</span>
+<span class="st">        &quot;&lt;input type=&#39;button&#39; id=&#39;autopreview&#39; value=&#39;Stop Auto Preview&#39; /&gt;&quot;);</span>
+
+<span class="st">  $(&quot;#updatesiteform&quot;).after(&quot;&lt;div style=&#39;padding: 5px; border: 1px solid black&#39; id=&#39;quickpreview&#39;&gt;&quot;);</span>
+<span class="st">  $(&quot;#quickpreview&quot;).html(&quot;&lt;div style=&#39;border: 1px solid red&#39;&gt;TITLE: &quot; + $(&quot;#formtitle&quot;).val() +</span>
+<span class="st">                            &quot;&lt;/div&gt;&quot; + $(&quot;#formdesc&quot;).val());</span>
+
+<span class="st">  $(&quot;#autopreview&quot;).click(function() {</span>
+<span class="st">    if(auto) {</span>
+<span class="st">      $(this).val(&quot;Start Auto Preview&quot;);</span>
+<span class="st">      $(&quot;#render&quot;).show();</span>
+<span class="st">      auto = 0;</span>
+<span class="st">    } else {</span>
+<span class="st">      $(this).val(&quot;Stop Auto Preview&quot;);</span>
+<span class="st">      $(&quot;#render&quot;).hide();</span>
+<span class="st">      $(&quot;#render&quot;).click();</span>
+<span class="st">      auto = 1;</span>
+<span class="st">    }</span>
+<span class="st">  });</span>
+
+<span class="st">  $(&quot;#render&quot;).click(function() {</span>
+<span class="st">    $(&quot;#quickpreview&quot;).html(&quot;&lt;div style=&#39;border: 1px solid red&#39;&gt;TITLE: &quot; + $(&quot;#formtitle&quot;).val() +</span>
+<span class="st">                            &quot;&lt;/div&gt;&quot; + $(&quot;#formdesc&quot;).val());</span>
+<span class="st">  });</span>
+
+<span class="st">  $(&quot;#formdesc, #formtitle&quot;).keyup(function() {</span>
+<span class="st">    if(!auto) return false;</span>
+
+<span class="st">    $(&quot;#quickpreview&quot;).html(&quot;&lt;div style=&#39;border: 1px solid red&#39;&gt;TITLE: &quot; + $(&quot;#formtitle&quot;).val() +</span>
+<span class="st">                            &quot;&lt;/div&gt;&quot; + $(&quot;#formdesc&quot;).val());</span>
+<span class="st">  });</span>
+<span class="st">});</span>
+<span class="st">  &lt;/script&gt;</span>
+<span class="kw">EOF;</span>
+
+<span class="kw">$s</span>-&gt;site = <span class="st">&quot;heidi&quot;</span><span class="ot">;</span>
+
+UpdateSite::secondHalf<span class="ot">(</span><span class="kw">$S</span><span class="ot">,</span> <span class="kw">$h</span><span class="ot">,</span> <span class="kw">$s</span><span class="ot">);</span></code></pre>
+<p><img src="image2.png" alt="Screenshot of testupdatesite2.php" /></p>
+<p>When you click on the 'preview' button you will get the third page.</p>
+<p><img src="image3.png" alt="Screenshot of updatesite-simple-preview.php" /></p>
+<p>Once you click the 'Create Article' you can go back to your first page and you should see messages.</p>
+<h2 id="enhance-the-sections">Enhance the Sections</h2>
+<p>You can change the 'testupdatecreate.php', 'testupdatesite2.php' and 'updatesite-simple-preview.php' to make them work better with your site. There are two other preview pages that you can use: 'updatesite-preview.php' and 'updatesite-new-preview.php'.</p>
+<h2 id="contact-me">Contact Me</h2>
+<p>Barton Phillips : <a href="mailto://bartonphillips@gmail.com">mailto://bartonphillips@gmail.com</a><br />Copyright © 2015 Barton Phillips<br />Project maintained by <a href="https://github.com/bartonlp">bartonlp</a></p>
+</body>
+</html>

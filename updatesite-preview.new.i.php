@@ -45,7 +45,7 @@ function updatesite_preview($classthis, $id, $page, $itemname, $title, $bodytext
   // results is output.
 
   ob_start();
-  eval('?>' . $data . '<?');
+  eval("?>" . $data);
   $data = ob_get_clean();
 
   $data = preg_replace("|<!-- Google Analitics -->.*<!-- END Google Analitics -->|s", "", $data);

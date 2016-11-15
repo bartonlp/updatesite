@@ -40,14 +40,14 @@ class UpdateSite {
    */
   
   public function __construct($s=null) {
-    // NOTE: This is wherre $top and $footer are filled in as well as all of the private properties.
+    // NOTE: This is where $top and $footer are filled in as well as all of the private properties.
 
     if($s) {
       foreach($s as $k=>$v) {
         $this->$k = $v; // any additional args become public
       }
     }
-    $this->self = $this->siteclass->self; //$_SERVER['PHP_SELF'];
+    $this->self = $_SERVER['PHP_SELF'];
   }
 
   /**
@@ -271,9 +271,12 @@ $cases
 });
   </script>
 EOF;
-
-    $top = $S->getPageHead($h);    
-
+    if(!$h->head) {
+      $top = $S->getPageHead($h);
+    } else {
+      $top = preg_replace("~</head>~", $h->extra . "</head>", $h->head);
+    }
+    
     if(!$h->nobanner) {
       $top .= $S->getBanner($h->banner, $h->nonav, $h->bodytag);
     } else {
@@ -319,6 +322,7 @@ EOF;
     
     $info = `grep '^// START UpdateSite ' *.php`; // actually run this command
     $info = explode("\n", $info); // an array of grep results
+
     $ar = array();
 
     foreach($info as $k=>$v) {
@@ -335,6 +339,7 @@ EOF;
         $ar[$m[1]] .= "<option value=\"$m[2]\">$m[3]</option>";
       }
     }
+
     return $ar;
   }
 
@@ -378,10 +383,12 @@ EOF;
       $top .= "\n<body>";
     }
 
-    if($h->footer) {
-      $S->footer = $S->getFooter($h->footer);
-    } else {
-      $S->footer = $S->getFooter("<a href='$startfilename'>Back To Start</a><hr/>");
+    if(!$h->nofooter) {
+      if($h->footer) {
+        $S->footer = $S->getFooter($h->footer);
+      } else {
+        $S->footer = $S->getFooter("<a href='$startfilename'>Back To Start</a><hr/>");
+      }
     }
     
     // $s->siteclass is filled in by the caller!
@@ -547,8 +554,10 @@ EOF;
       $itemname = " && itemname='$item'";
     }
 
+    $database = $this->siteclass->getDbName(); 
+
     $this->siteclass->query("select count(*) from information_schema.tables ".
-                 "where (table_schema = '{$this->siteclass->dbinfo['database']}') and (table_name = 'site')");
+                 "where (table_schema = '$database') and (table_name = 'site')");
 
     list($ok) = $this->siteclass->fetchrow('num');
     if(!$ok) {
@@ -658,7 +667,7 @@ EOF;
       $$k = $v; // make the variables like extract() does.
     }
 
-    $memberid = $this->siteclass->getId(); // Get the id of the member who posted this.
+// BLP    $memberid = $this->siteclass->getId(); // Get the id of the member who posted this.
 
     try {
       if($id) {
@@ -674,7 +683,7 @@ EOF;
           
       if($err == 1146) {
         // If table does not exist create it
-        // CREATE MINIMUM member table. If you need more extend this class!!!
+        // CREATE MINIMUM 'site' table. 
         $query2 = <<<EOF
 create table site (
   id int(11) auto_increment not null,
