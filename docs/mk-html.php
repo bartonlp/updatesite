@@ -48,6 +48,8 @@ code {
 ';
 
 # Make .html files from .md files
-pagetitle="Main Readme file";
-/usr/bin/pandoc -Vpagetitle="$pagetitle" -Vhighlighting-css="$css" -s -f markdown_github README.md -o README.html
+pagetitle="Index";
+author="Barton Phillips: bartonphillips@gmail.com";
+
+/usr/bin/pandoc -Vpagetitle="$pagetitle" -Vauthor-meta="$author" -t html5 -Vhighlighting-css="$css" -s -f markdown_github index.md -o index.html
 
