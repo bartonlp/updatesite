@@ -1,9 +1,7 @@
 #!/bin/bash
 # !!! You need pandoc: sudo apt-get install pandoc
 
-css='
-<style>
-div.sourceCode { overflow-x: auto; }
+css='div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
 table.sourceCode { width: 100%; line-height: 100%; }
@@ -47,7 +45,6 @@ pre.sourceCode {
 code {
   background-color: #EEF3E2;
 }
-</style>
 ';
 
 # Make .html files from .md files
