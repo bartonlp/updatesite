@@ -296,7 +296,7 @@ $top
 <div id="firsthalf-wrapper">
 <h2>Select Site Information</h2>
 <form action="$nextfilename" method="post">
-<table id="firsthalf-tbl>
+<table id="firsthalf-tbl">
 <tr><th>Select Page</th><td id="pageselect">
 <select name="pagename">
 $pagenames
