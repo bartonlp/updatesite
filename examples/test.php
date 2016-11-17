@@ -5,6 +5,7 @@ ErrorClass::setNoEmailErrs(true);
 ErrorClass::setDevelopment(true);
 $S = new $_site->className($_site);
 
+// The following comment line MUST appear for the rest of UpdateSite to work.
 // START UpdateSite Message
 
 $s->siteclass = $S;
