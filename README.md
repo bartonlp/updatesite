@@ -134,7 +134,7 @@ $footer
 EOF;
 ```
 
-![Screenshot of testupdatecreate.php](image1.png)
+![Screenshot of testupdatecreate.php](docs/image1.png)
 
 This is the first half of the creation program. As you can see the two drop downs are locked together by JavaScript. You can select the page (the name of the webpage you created) and then select the database item you want to edit.
 
@@ -198,11 +198,11 @@ $s->site = "heidi";
 UpdateSite::secondHalf($S, $h, $s);
 ```
 
-![Screenshot of testupdatesite2.php](image2.png)
+![Screenshot of testupdatesite2.php](docs/image2.png)
 
 When you click on the 'preview' button you will get the third page.
 
-![Screenshot of updatesite-simple-preview.php](image3.png)
+![Screenshot of updatesite-simple-preview.php](docs/image3.png)
 
 Once you click the 'Create Article' you can go back to your first page and you should see messages.
 
