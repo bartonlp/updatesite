@@ -14,30 +14,56 @@ Once you have **composer** select a directory where you want your repository and
 composer require bartonlp/updatesite dev-master
 ```
 
-To use the class:
+## How It Works
+
+The sections are stored in a database. Currently there are two databases the **SiteClass** supports:
+* MySql. This uses the most current PHP library (mysqli)
+* Sqlite2. This is not as well tested but should work with **UpdateSite**
+
+The database schema for MySql looks like this:
+
+```sql
+CREATE TABLE `site` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `page` varchar(255) NOT NULL,
+  `itemname` varchar(255) NOT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `bodytext` text,
+  `date` datetime DEFAULT NULL,
+  `status` enum('active','inactive','delete') DEFAULT 'active',
+  `lasttime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `creator` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+```
+
+The 'creator' field is only used if you have extended the **SiteClass** to handel members.
+
+You can create a webpage as follows:
 
 ```php
-<?php
+// test.php
 // See the SiteClass documentation 
-$_site = require_once(getenv("SITELOAD")."/siteload.php");
-//ErrorClass::setNoEmailErrs(true);
-//ErrorClass::setDevelopment(true);
+$_site = require_once(getenv("SITELOAD"). "/siteload.php");
 $S = new $_site->className($_site);
 
-// The following comment line MUST appear for the rest of UpdateSite to work.
+// The following comment is needed by UpdateSite.
+// This must be at the beginning of the line and have the words 'START UpdateSite' 
+// followed by the name of the database item. This can be anywhere in the file but
+// I like to put it close the the invocation of UpdateSite.
+
 // START UpdateSite Message
+// START UpdateSite AnotherMessage
 
-$s->siteclass = $S;
-$s->page = "test.php";
-$s->itemname ="Message";
+$s->siteclass = $S; // This is the SiteClass object or one of its children
+$s->page = "test.php"; // The name of the page
+$s->itemname ="Message"; // The name of the database item
 
-// Instantiate UpdateSite class
+$u = new UpdateSite($s); // instantiate the class
 
-$u = new UpdateSite($s);
+$item = $u->getItem(); // gets the item in 'itemname'. You can set a different value and then call with $s.
 
-$item = $u->getItem();
-
-// If item is false then no item in table
+// If item is false then no active item in table
 
 if($item !== false) {
   $message = <<<EOF
@@ -47,22 +73,37 @@ if($item !== false) {
 <p class="itemdate">Created: {$item['date']}</p>
 </div>
 <hr/>
-
 EOF;
 }
+
+$s->itemname = "AnotherMessage"; // set $s with a different name
+$item = $u->getItem($s); // call getItem($s) with the new itemname.
+
+if($item !== false) {
+  $anotherMessage = <<<EOF
+<div>
+<h2>{$item['title']}</h2>
+<div>{$item['bodytext']}</div>
+<p class="itemdate">Created: {$item['date']}</p>
+</div>
+<hr/>
+EOF;
+}
+
+// Use SiteClass to get the top and footer
 
 list($top, $footer) = $S->getPageTopBottom();
 
 echo <<<EOF
 $top
-<h1>TEST</h1>
+<h1>Example 1</h1>
 $message
+$anotherMessage
 $footer
 EOF;
 ```
 
-The comment `// START UpdateSite Message` is important. This is used by **UpdateSite** to find the sites that can be 
-*created/edited*. The comment must start at the beginning of a line and must be exactaly as shown.
+The comment `// START UpdateSite Message` is important. This is used by **UpdateSite** to find the sites that can be *created/edited*. The comment must start at the beginning of a line and must have `START UpdateSite` be exactaly as shown followed by the name of the item, in this case 'Message', and then optionally a human readable text in quotes. For example "Webmaster's Message".
 
 If you run this example it will show no messages.
 
@@ -97,7 +138,7 @@ $footer
 EOF;
 ```
 
-![Screenshot of testupdatecreate.php](image1.png)
+![Screenshot of testupdatecreate.php](https://bartonlp.github.io/updatesite/image1.png)
 
 This is the first half of the creation program. As you can see the two drop downs are locked together by JavaScript. You can select the page (the name of the webpage you created) and then select the database item you want to edit.
 
@@ -161,11 +202,11 @@ $s->site = "heidi";
 UpdateSite::secondHalf($S, $h, $s);
 ```
 
-![Screenshot of testupdatesite2.php](image2.png)
+![Screenshot of testupdatesite2.php](https://bartonlp.github.io/updatesite/image2.png)
 
 When you click on the 'preview' button you will get the third page.
 
-![Screenshot of updatesite-simple-preview.php](image3.png)
+![Screenshot of updatesite-simple-preview.php](https://bartonlp.github.io/updatesite/image3.png)
 
 Once you click the 'Create Article' you can go back to your first page and you should see messages.
 
@@ -178,7 +219,3 @@ You can change the 'testupdatecreate.php', 'testupdatesite2.php' and 'updatesite
 Barton Phillips : [mailto://bartonphillips@gmail.com]('mailto://bartonphillips@gmail.com')    
 Copyright &copy; 2015 Barton Phillips  
 Project maintained by [bartonlp](https://github.com/bartonlp)
-
-
-
-

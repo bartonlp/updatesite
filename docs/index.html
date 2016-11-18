@@ -65,50 +65,87 @@ code {
 <p>If you do not have <strong>composer</strong> you can get it at <a href="https://getcomposer.org/download/"><a href="https://getcomposer.org/download/">https://getcomposer.org/download/</a></a>. Just follow the instruction to install it globally.</p>
 <p>Once you have <strong>composer</strong> select a directory where you want your repository and enter:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">composer</span> require bartonlp/updatesite dev-master</code></pre>
-<p>To use the class:</p>
-<pre class="sourceCode php"><code class="sourceCode php"><span class="kw">&lt;?php</span>
-<span class="co">// See the SiteClass documentation </span>
-<span class="kw">$_site</span> = <span class="kw">require_once</span><span class="ot">(</span><span class="fu">getenv</span><span class="ot">(</span><span class="st">&quot;SITELOAD&quot;</span><span class="ot">)</span>.<span class="st">&quot;/siteload.php&quot;</span><span class="ot">);</span>
-<span class="co">//ErrorClass::setNoEmailErrs(true);</span>
-<span class="co">//ErrorClass::setDevelopment(true);</span>
-<span class="kw">$S</span> = <span class="kw">new</span> <span class="kw">$_site</span>-&gt;className<span class="ot">(</span><span class="kw">$_site</span><span class="ot">);</span>
+<h2 id="how-it-works">How It Works</h2>
+<p>The sections are stored in a database. Currently there are two databases the <strong>SiteClass</strong> supports:</p>
+<ul>
+<li>MySql. This uses the most current PHP library (mysqli)<br /></li>
+<li>Sqlite2. This is not as well tested but should work with <strong>UpdateSite</strong></li>
+</ul>
+<p>The database schema for MySql looks like this:</p>
+<pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">CREATE</span> <span class="kw">TABLE</span> `site` (
+  `id` <span class="dt">int</span>(<span class="dv">11</span>) <span class="kw">NOT</span> <span class="kw">NULL</span> AUTO_INCREMENT,
+  `page` <span class="dt">varchar</span>(<span class="dv">255</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,
+  `itemname` <span class="dt">varchar</span>(<span class="dv">255</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,
+  `title` <span class="dt">varchar</span>(<span class="dv">255</span>) <span class="kw">DEFAULT</span> <span class="kw">NULL</span>,
+  `bodytext` text,
+  `date` datetime <span class="kw">DEFAULT</span> <span class="kw">NULL</span>,
+  `status` enum(<span class="st">&#39;active&#39;</span>,<span class="st">&#39;inactive&#39;</span>,<span class="st">&#39;delete&#39;</span>) <span class="kw">DEFAULT</span> <span class="st">&#39;active&#39;</span>,
+  `lasttime` <span class="dt">timestamp</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="fu">CURRENT_TIMESTAMP</span> <span class="kw">ON</span> <span class="kw">UPDATE</span> <span class="fu">CURRENT_TIMESTAMP</span>,
+  `creator` <span class="dt">varchar</span>(<span class="dv">255</span>) <span class="kw">DEFAULT</span> <span class="kw">NULL</span>,
+  <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (`id`)
+) ENGINE=MyISAM <span class="kw">DEFAULT</span> CHARSET=utf8;</code></pre>
+<p>The 'creator' field is only used if you have extended the <strong>SiteClass</strong> to handel members.</p>
+<p>You can create a webpage as follows:</p>
+<pre class="sourceCode php"><code class="sourceCode php">// test.php
+// See the SiteClass documentation 
+$_site = require_once(getenv(&quot;SITELOAD&quot;). &quot;/siteload.php&quot;);
+$S = new $_site-&gt;className($_site);
 
-<span class="co">// The following comment line MUST appear for the rest of UpdateSite to work.</span>
-<span class="co">// START UpdateSite Message</span>
+// The following comment is needed by UpdateSite.
+// This must be at the beginning of the line and have the words &#39;START UpdateSite&#39; 
+// followed by the name of the database item. This can be anywhere in the file but
+// I like to put it close the the invocation of UpdateSite.
 
-<span class="kw">$s</span>-&gt;siteclass = <span class="kw">$S</span><span class="ot">;</span>
-<span class="kw">$s</span>-&gt;page = <span class="st">&quot;test.php&quot;</span><span class="ot">;</span>
-<span class="kw">$s</span>-&gt;itemname =<span class="st">&quot;Message&quot;</span><span class="ot">;</span>
+// START UpdateSite Message
+// START UpdateSite AnotherMessage
 
-<span class="co">// Instantiate UpdateSite class</span>
+$s-&gt;siteclass = $S; // This is the SiteClass object or one of its children
+$s-&gt;page = &quot;test.php&quot;; // The name of the page
+$s-&gt;itemname =&quot;Message&quot;; // The name of the database item
 
-<span class="kw">$u</span> = <span class="kw">new</span> UpdateSite<span class="ot">(</span><span class="kw">$s</span><span class="ot">);</span>
+$u = new UpdateSite($s); // instantiate the class
 
-<span class="kw">$item</span> = <span class="kw">$u</span>-&gt;getItem<span class="ot">();</span>
+$item = $u-&gt;getItem(); // gets the item in &#39;itemname&#39;. You can set a different value and then call with $s.
 
-<span class="co">// If item is false then no item in table</span>
+// If item is false then no active item in table
 
-<span class="kw">if</span><span class="ot">(</span><span class="kw">$item</span> !== <span class="kw">false</span><span class="ot">)</span> {
-  <span class="kw">$message</span> = <span class="kw">&lt;&lt;&lt;EOF</span>
-<span class="st">&lt;div&gt;</span>
-<span class="st">&lt;h2&gt;</span><span class="kw">{$item[&#39;title&#39;]}</span><span class="st">&lt;/h2&gt;</span>
-<span class="st">&lt;div&gt;</span><span class="kw">{$item[&#39;bodytext&#39;]}</span><span class="st">&lt;/div&gt;</span>
-<span class="st">&lt;p class=&quot;itemdate&quot;&gt;Created: </span><span class="kw">{$item[&#39;date&#39;]}</span><span class="st">&lt;/p&gt;</span>
-<span class="st">&lt;/div&gt;</span>
-<span class="st">&lt;hr/&gt;</span>
+if($item !== false) {
+  $message = &lt;&lt;&lt;EOF
+&lt;div&gt;
+&lt;h2&gt;{$item[&#39;title&#39;]}&lt;/h2&gt;
+&lt;div&gt;{$item[&#39;bodytext&#39;]}&lt;/div&gt;
+&lt;p class=&quot;itemdate&quot;&gt;Created: {$item[&#39;date&#39;]}&lt;/p&gt;
+&lt;/div&gt;
+&lt;hr/&gt;
+EOF;
+}
 
-<span class="st">EOF;</span>
-<span class="st">}</span>
+$s-&gt;itemname = &quot;AnotherMessage&quot;; // set $s with a different name
+$item = $u-&gt;getItem($s); // call getItem($s) with the new itemname.
 
-<span class="st">list(</span><span class="kw">$top</span><span class="st">, </span><span class="kw">$footer</span><span class="st">) = </span><span class="kw">$S</span><span class="st">-&gt;getPageTopBottom();</span>
+if($item !== false) {
+  $anotherMessage = &lt;&lt;&lt;EOF
+&lt;div&gt;
+&lt;h2&gt;{$item[&#39;title&#39;]}&lt;/h2&gt;
+&lt;div&gt;{$item[&#39;bodytext&#39;]}&lt;/div&gt;
+&lt;p class=&quot;itemdate&quot;&gt;Created: {$item[&#39;date&#39;]}&lt;/p&gt;
+&lt;/div&gt;
+&lt;hr/&gt;
+EOF;
+}
 
-<span class="st">echo &lt;&lt;&lt;EOF</span>
-<span class="kw">$top</span>
-<span class="st">&lt;h1&gt;TEST&lt;/h1&gt;</span>
-<span class="kw">$message</span>
-<span class="kw">$footer</span>
-<span class="st">EOF;</span></code></pre>
-<p>The comment <code>// START UpdateSite Message</code> is important. This is used by <strong>UpdateSite</strong> to find the sites that can be<br /><em>created/edited</em>. The comment must start at the beginning of a line and must be exactaly as shown.</p>
+// Use SiteClass to get the top and footer
+
+list($top, $footer) = $S-&gt;getPageTopBottom();
+
+echo &lt;&lt;&lt;EOF
+$top
+&lt;h1&gt;Example 1&lt;/h1&gt;
+$message
+$anotherMessage
+$footer
+EOF;</code></pre>
+<p>The comment <code>// START UpdateSite Message</code> is important. This is used by <strong>UpdateSite</strong> to find the sites that can be <em>created/edited</em>. The comment must start at the beginning of a line and must have <code>START UpdateSite</code> be exactaly as shown followed by the name of the item, in this case 'Message', and then optionally a human readable text in quotes. For example &quot;Webmaster's Message&quot;.</p>
 <p>If you run this example it will show no messages.</p>
 <h2 id="create-the-database-entries.">Create the Database Entries.</h2>
 <p>To create the database entries you can run the following program.</p>
@@ -136,7 +173,7 @@ code {
 <span class="st">&lt;a href=&quot;testupdateadmin.php&quot;&gt;Administer Update Site Table&lt;/a&gt;&lt;br/&gt;</span>
 <span class="kw">$footer</span>
 <span class="kw">EOF;</span></code></pre>
-<p><img src="image1.png" alt="Screenshot of testupdatecreate.php" /></p>
+<p><img src="https://bartonlp.github.io/updatesite/image1.png" alt="Screenshot of testupdatecreate.php" /></p>
 <p>This is the first half of the creation program. As you can see the two drop downs are locked together by JavaScript. You can select the page (the name of the webpage you created) and then select the database item you want to edit.</p>
 <h2 id="edit-the-selection">Edit the Selection</h2>
 <p>The second screen lets you edit the selected item.</p>
@@ -193,9 +230,9 @@ code {
 <span class="kw">$s</span>-&gt;site = <span class="st">&quot;heidi&quot;</span><span class="ot">;</span>
 
 UpdateSite::secondHalf<span class="ot">(</span><span class="kw">$S</span><span class="ot">,</span> <span class="kw">$h</span><span class="ot">,</span> <span class="kw">$s</span><span class="ot">);</span></code></pre>
-<p><img src="image2.png" alt="Screenshot of testupdatesite2.php" /></p>
+<p><img src="https://bartonlp.github.io/updatesite/image2.png" alt="Screenshot of testupdatesite2.php" /></p>
 <p>When you click on the 'preview' button you will get the third page.</p>
-<p><img src="image3.png" alt="Screenshot of updatesite-simple-preview.php" /></p>
+<p><img src="https://bartonlp.github.io/updatesite/image3.png" alt="Screenshot of updatesite-simple-preview.php" /></p>
 <p>Once you click the 'Create Article' you can go back to your first page and you should see messages.</p>
 <h2 id="enhance-the-sections">Enhance the Sections</h2>
 <p>You can change the 'testupdatecreate.php', 'testupdatesite2.php' and 'updatesite-simple-preview.php' to make them work better with your site. There are two other preview pages that you can use: 'updatesite-preview.php' and 'updatesite-new-preview.php'.</p>

@@ -1,12 +1,18 @@
 # UpdateSite Class
 
-This is a PHP Class with a little JavaScript thrown in.
+This class works with **SiteClass**. It creates sections or articles that can be placed within a webpage. The articles can be edited via a web browser and they are maintained in a database (MySql is prefered). Check out [SiteClass Documentation and Examples](https://bartonlp.github.io/site-class).
 
-This class works with [SiteClass](https://github.com/bartonlp/site-class). **SiteClass** documentation can be found at [SiteClass Documentation](https://bartonlp.github.io/site-class).
+## Install
 
-The class can be used to insert sections into a website from a database. The sections can be edited and administered via the web.
+You can either **clone** the repository or you can use **composer** to install **UpdateSite**.
 
-**This is still a work in progress and is not stable.**
+If you do not have **composer** you can get it at [https://getcomposer.org/download/](https://getcomposer.org/download/). Just follow the instruction to install it globally. 
+
+Once you have **composer** select a directory where you want your repository and enter:
+
+```bash
+composer require bartonlp/updatesite dev-master
+```
 
 ## How It Works
 
@@ -14,7 +20,7 @@ The sections are stored in a database. Currently there are two databases the **S
 * MySql. This uses the most current PHP library (mysqli)
 * Sqlite2. This is not as well tested but should work with **UpdateSite**
 
-The database schema looks like this:
+The database schema for MySql looks like this:
 
 ```sql
 CREATE TABLE `site` (
@@ -31,28 +37,25 @@ CREATE TABLE `site` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 ```
 
-This is the schema for MySql.
-
 The 'creator' field is only used if you have extended the **SiteClass** to handel members.
 
 You can create a webpage as follows:
 
 ```php
 // test.php
-
+// See the SiteClass documentation 
 $_site = require_once(getenv("SITELOAD"). "/siteload.php");
 $S = new $_site->className($_site);
 
 // The following comment is needed by UpdateSite.
 // This must be at the beginning of the line and have the words 'START UpdateSite' 
-// followed ma the name of the database item. This can be anywhere in the file but
+// followed by the name of the database item. This can be anywhere in the file but
 // I like to put it close the the invocation of UpdateSite.
 
 // START UpdateSite Message
 // START UpdateSite AnotherMessage
 
 $s->siteclass = $S; // This is the SiteClass object or one of its children
-$s->site = "heidi"; // The name of the site. Can be any name
 $s->page = "test.php"; // The name of the page
 $s->itemname ="Message"; // The name of the database item
 
@@ -73,9 +76,8 @@ if($item !== false) {
 EOF;
 }
 
-$s->itemname = "AnotherMessage";
-
-$item = $u->getItem($s); 
+$s->itemname = "AnotherMessage"; // set $s with a different name
+$item = $u->getItem($s); // call getItem($s) with the new itemname.
 
 if($item !== false) {
   $anotherMessage = <<<EOF
@@ -101,9 +103,11 @@ $footer
 EOF;
 ```
 
+The comment `// START UpdateSite Message` is important. This is used by **UpdateSite** to find the sites that can be *created/edited*. The comment must start at the beginning of a line and must have `START UpdateSite` be exactaly as shown followed by the name of the item, in this case 'Message', and then optionally a human readable text in quotes. For example "Webmaster's Message".
+
 If you run this example it will show no messages.
 
-## Create the Database Entries. Selection
+## Create the Database Entries.
 
 To create the database entries you can run the following program.
 
@@ -134,7 +138,7 @@ $footer
 EOF;
 ```
 
-![Screenshot of testupdatecreate.php](docs/image1.png)
+![Screenshot of testupdatecreate.php](https://bartonlp.github.io/updatesite/image1.png)
 
 This is the first half of the creation program. As you can see the two drop downs are locked together by JavaScript. You can select the page (the name of the webpage you created) and then select the database item you want to edit.
 
@@ -198,11 +202,11 @@ $s->site = "heidi";
 UpdateSite::secondHalf($S, $h, $s);
 ```
 
-![Screenshot of testupdatesite2.php](docs/image2.png)
+![Screenshot of testupdatesite2.php](https://bartonlp.github.io/updatesite/image2.png)
 
 When you click on the 'preview' button you will get the third page.
 
-![Screenshot of updatesite-simple-preview.php](docs/image3.png)
+![Screenshot of updatesite-simple-preview.php](https://bartonlp.github.io/updatesite/image3.png)
 
 Once you click the 'Create Article' you can go back to your first page and you should see messages.
 
@@ -212,7 +216,6 @@ You can change the 'testupdatecreate.php', 'testupdatesite2.php' and 'updatesite
 
 ## Contact Me
 
-Barton Phillips : <a href="mailto://bartonphillips@gmail.com">mailto://bartonphillips@gmail.com</a>  
+Barton Phillips : [mailto://bartonphillips@gmail.com]('mailto://bartonphillips@gmail.com')    
 Copyright &copy; 2015 Barton Phillips  
 Project maintained by [bartonlp](https://github.com/bartonlp)
-

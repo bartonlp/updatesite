@@ -49,5 +49,5 @@ code {
 
 # Make .html files from .md files
 pagetitle="Main Readme file";
-/usr/bin/pandoc -Vpagetitle="$pagetitle" -Vhighlighting-css="$css" -s -f markdown_github README.md -o README.html
+/usr/bin/pandoc -Vpagetitle="$pagetitle" -Vhighlighting-css="$css" -s -t html5 -f markdown_github README.md -o README.html
 
