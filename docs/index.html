@@ -86,65 +86,66 @@ code {
 ) ENGINE=MyISAM <span class="kw">DEFAULT</span> CHARSET=utf8;</code></pre>
 <p>The 'creator' field is only used if you have extended the <strong>SiteClass</strong> to handel members.</p>
 <p>You can create a webpage as follows:</p>
-<pre class="sourceCode php"><code class="sourceCode php">// test.php
-// See the SiteClass documentation 
-$_site = require_once(getenv(&quot;SITELOAD&quot;). &quot;/siteload.php&quot;);
-$S = new $_site-&gt;className($_site);
+<pre class="sourceCode php"><code class="sourceCode php"><span class="kw">&lt;?php</span>
+<span class="co">// test.php</span>
+<span class="co">// See the SiteClass documentation </span>
+<span class="kw">$_site</span> = <span class="kw">require_once</span><span class="ot">(</span><span class="fu">getenv</span><span class="ot">(</span><span class="st">&quot;SITELOAD&quot;</span><span class="ot">)</span>. <span class="st">&quot;/siteload.php&quot;</span><span class="ot">);</span>
+<span class="kw">$S</span> = <span class="kw">new</span> <span class="kw">$_site</span>-&gt;className<span class="ot">(</span><span class="kw">$_site</span><span class="ot">);</span>
 
-// The following comment is needed by UpdateSite.
-// This must be at the beginning of the line and have the words &#39;START UpdateSite&#39; 
-// followed by the name of the database item. This can be anywhere in the file but
-// I like to put it close the the invocation of UpdateSite.
+<span class="co">// The following comment is needed by UpdateSite.</span>
+<span class="co">// This must be at the beginning of the line and have the words &#39;START UpdateSite&#39; </span>
+<span class="co">// followed by the name of the database item. This can be anywhere in the file but</span>
+<span class="co">// I like to put it close the the invocation of UpdateSite.</span>
 
-// START UpdateSite Message
-// START UpdateSite AnotherMessage
+<span class="co">// START UpdateSite Message</span>
+<span class="co">// START UpdateSite AnotherMessage</span>
 
-$s-&gt;siteclass = $S; // This is the SiteClass object or one of its children
-$s-&gt;page = &quot;test.php&quot;; // The name of the page
-$s-&gt;itemname =&quot;Message&quot;; // The name of the database item
+<span class="kw">$s</span>-&gt;siteclass = <span class="kw">$S</span><span class="ot">;</span> <span class="co">// This is the SiteClass object or one of its children</span>
+<span class="kw">$s</span>-&gt;page = <span class="st">&quot;test.php&quot;</span><span class="ot">;</span> <span class="co">// The name of the page</span>
+<span class="kw">$s</span>-&gt;itemname =<span class="st">&quot;Message&quot;</span><span class="ot">;</span> <span class="co">// The name of the database item</span>
 
-$u = new UpdateSite($s); // instantiate the class
+<span class="kw">$u</span> = <span class="kw">new</span> UpdateSite<span class="ot">(</span><span class="kw">$s</span><span class="ot">);</span> <span class="co">// instantiate the class</span>
 
-$item = $u-&gt;getItem(); // gets the item in &#39;itemname&#39;. You can set a different value and then call with $s.
+<span class="kw">$item</span> = <span class="kw">$u</span>-&gt;getItem<span class="ot">();</span> <span class="co">// gets the item in &#39;itemname&#39;. You can set a different value and then call with $s.</span>
 
-// If item is false then no active item in table
+<span class="co">// If item is false then no active item in table</span>
 
-if($item !== false) {
-  $message = &lt;&lt;&lt;EOF
-&lt;div&gt;
-&lt;h2&gt;{$item[&#39;title&#39;]}&lt;/h2&gt;
-&lt;div&gt;{$item[&#39;bodytext&#39;]}&lt;/div&gt;
-&lt;p class=&quot;itemdate&quot;&gt;Created: {$item[&#39;date&#39;]}&lt;/p&gt;
-&lt;/div&gt;
-&lt;hr/&gt;
-EOF;
-}
+<span class="kw">if</span><span class="ot">(</span><span class="kw">$item</span> !== <span class="kw">false</span><span class="ot">)</span> {
+  <span class="kw">$message</span> = <span class="kw">&lt;&lt;&lt;EOF</span>
+<span class="st">&lt;div&gt;</span>
+<span class="st">&lt;h2&gt;</span><span class="kw">{$item[&#39;title&#39;]}</span><span class="st">&lt;/h2&gt;</span>
+<span class="st">&lt;div&gt;</span><span class="kw">{$item[&#39;bodytext&#39;]}</span><span class="st">&lt;/div&gt;</span>
+<span class="st">&lt;p class=&quot;itemdate&quot;&gt;Created: </span><span class="kw">{$item[&#39;date&#39;]}</span><span class="st">&lt;/p&gt;</span>
+<span class="st">&lt;/div&gt;</span>
+<span class="st">&lt;hr/&gt;</span>
+<span class="st">EOF;</span>
+<span class="st">}</span>
 
-$s-&gt;itemname = &quot;AnotherMessage&quot;; // set $s with a different name
-$item = $u-&gt;getItem($s); // call getItem($s) with the new itemname.
+<span class="kw">$s</span><span class="st">-&gt;itemname = &quot;AnotherMessage&quot;; // set </span><span class="kw">$s</span><span class="st"> with a different name</span>
+<span class="kw">$item</span><span class="st"> = </span><span class="kw">$u</span><span class="st">-&gt;getItem(</span><span class="kw">$s</span><span class="st">); // call getItem(</span><span class="kw">$s</span><span class="st">) with the new itemname.</span>
 
-if($item !== false) {
-  $anotherMessage = &lt;&lt;&lt;EOF
-&lt;div&gt;
-&lt;h2&gt;{$item[&#39;title&#39;]}&lt;/h2&gt;
-&lt;div&gt;{$item[&#39;bodytext&#39;]}&lt;/div&gt;
-&lt;p class=&quot;itemdate&quot;&gt;Created: {$item[&#39;date&#39;]}&lt;/p&gt;
-&lt;/div&gt;
-&lt;hr/&gt;
-EOF;
-}
+<span class="st">if(</span><span class="kw">$item</span><span class="st"> !== false) {</span>
+<span class="st">  </span><span class="kw">$anotherMessage</span><span class="st"> = &lt;&lt;&lt;EOF</span>
+<span class="st">&lt;div&gt;</span>
+<span class="st">&lt;h2&gt;</span><span class="kw">{$item[&#39;title&#39;]}</span><span class="st">&lt;/h2&gt;</span>
+<span class="st">&lt;div&gt;</span><span class="kw">{$item[&#39;bodytext&#39;]}</span><span class="st">&lt;/div&gt;</span>
+<span class="st">&lt;p class=&quot;itemdate&quot;&gt;Created: </span><span class="kw">{$item[&#39;date&#39;]}</span><span class="st">&lt;/p&gt;</span>
+<span class="st">&lt;/div&gt;</span>
+<span class="st">&lt;hr/&gt;</span>
+<span class="st">EOF;</span>
+<span class="st">}</span>
 
-// Use SiteClass to get the top and footer
+<span class="st">// Use SiteClass to get the top and footer</span>
 
-list($top, $footer) = $S-&gt;getPageTopBottom();
+<span class="st">list(</span><span class="kw">$top</span><span class="st">, </span><span class="kw">$footer</span><span class="st">) = </span><span class="kw">$S</span><span class="st">-&gt;getPageTopBottom();</span>
 
-echo &lt;&lt;&lt;EOF
-$top
-&lt;h1&gt;Example 1&lt;/h1&gt;
-$message
-$anotherMessage
-$footer
-EOF;</code></pre>
+<span class="st">echo &lt;&lt;&lt;EOF</span>
+<span class="kw">$top</span>
+<span class="st">&lt;h1&gt;Example 1&lt;/h1&gt;</span>
+<span class="kw">$message</span>
+<span class="kw">$anotherMessage</span>
+<span class="kw">$footer</span>
+<span class="st">EOF;</span></code></pre>
 <p>The comment <code>// START UpdateSite Message</code> is important. This is used by <strong>UpdateSite</strong> to find the sites that can be <em>created/edited</em>. The comment must start at the beginning of a line and must have <code>START UpdateSite</code> be exactaly as shown followed by the name of the item, in this case 'Message', and then optionally a human readable text in quotes. For example &quot;Webmaster's Message&quot;.</p>
 <p>If you run this example it will show no messages.</p>
 <h2 id="create-the-database-entries.">Create the Database Entries.</h2>

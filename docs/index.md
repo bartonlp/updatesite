@@ -42,6 +42,7 @@ The 'creator' field is only used if you have extended the **SiteClass** to hande
 You can create a webpage as follows:
 
 ```php
+<?php
 // test.php
 // See the SiteClass documentation 
 $_site = require_once(getenv("SITELOAD"). "/siteload.php");
