@@ -218,6 +218,6 @@ You can change the 'testupdatecreate.php', 'testupdatesite2.php' and 'updatesite
 
 ## Contact Me
 
-Barton Phillips : [mailto://bartonphillips@gmail.com]('mailto://bartonphillips@gmail.com')    
+Barton Phillips : [mailto://bartonphillips@gmail.com](mailto://bartonphillips@gmail.com)    
 Copyright &copy; 2015 Barton Phillips  
 Project maintained by [bartonlp](https://github.com/bartonlp)
