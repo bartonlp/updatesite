@@ -230,7 +230,7 @@ class UpdateSite {
     // the update is posted to the database.
 
     if(empty($nextfilename)) {
-      $nextfilename = "/updatesite2.php";
+      $nextfilename = "updatesite2.php";
     }
 
     // $options is an array of filenames and select options
@@ -370,7 +370,7 @@ EOF;
     // $startfilename is the name of the first half of this pair (defaults to '/updatesite.php'.
 
     if(empty($startfilename)) {
-      $startfilename = "/updatesite.php";
+      $startfilename = "updatesite.php";
     }
 
     if(!$s->head) {
@@ -439,7 +439,8 @@ EOF;
     $ret = <<<EOF
 <form id="updatesiteform" action="$this->self" method="post">
 <p>Not all update sections display the title!</p>
-<p>Some <i>HTML tags</i> are allowed.</p>
+<p><i>script, ifram, object, embed, link</i> and <i>meta</i> tags are <b>NOT</b> allowed and will be turned into text via <i>&amp;lt;</i>
+and <i>&amp;gt;</i?.</p>
 <table id="formtable" $styles->table>
 <tr><th $styles->labels>Title</th>
 <td $styles->body><input id="formtitle" $styles->input type="text" name="title" value="{$values['title']}" /></td>
@@ -639,7 +640,7 @@ EOF;
   
       $badtags = array("~<(/?script.*?)>~is", "~<(/?iframe.*?)>~is",
                        "~<(/?object.*?)>~is", "~<(/?embed.*?)>~is",
-                       "~<(/?input.*?)>~is", "~<(/?textarea.*?)>~is",
+                       /*"~<(/?input.*?)>~is", "~<(/?textarea.*?)>~is",*/ // allow input and textarea
                        "~<(/?link.*?)>~is", "~<(/?meta.*?)>~si");
 
       foreach(array(title=>$title, bodytext=>$bodytext) as $k=>$v) {
@@ -669,7 +670,7 @@ EOF;
   
     $badtags = array("~<(/?script.*?)>~is", "~<(/?iframe.*?)>~is",
                      "~<(/?object.*?)>~is", "~<(/?embed.*?)>~is",
-                     "~<(/?input.*?)>~is", "~<(/?textarea.*?)>~is",
+                     /*"~<(/?input.*?)>~is", "~<(/?textarea.*?)>~is",*/ // allow input and textarea
                      "~<(/?link.*?)>~is", "~<(/?meta.*?)>~si");
 
     foreach(array(title=>$title, bodytext=>$bodytext) as $k=>$v) {
@@ -921,12 +922,12 @@ EOF;
   public function admin() {
     $n = $this->siteclass->query("select * from site");
     if(!$n) {
-      echo "NO Records Fount";
+      echo "NO Records Found";
       exit();
     }
     while($row = $this->siteclass->fetchrow('assoc')) {
       if(!$row) {
-        echo "NO Records Fount";
+        echo "NO Records Found";
         exit();
       }
         
