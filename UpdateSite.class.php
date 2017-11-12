@@ -271,6 +271,7 @@ $cases
 });
   </script>
 EOF;
+
     if(!$h->head) {
       $top = $S->getPageHead($h);
     } else {
@@ -330,14 +331,14 @@ EOF;
     foreach($info as $k=>$v) {
       // each grep line looks like <filename>:// START UpdateSite <itemname> <human readable string>
       // We want the filename and the itemname and the human readable string
+
+      $v = rtrim($v); // for some reason some items have a space after them?
       
       if(preg_match("~^(.*?):// START UpdateSite (\w+?)(?:$| (.*)$)~", $v, $m)) {
-      
-        if(empty($m[3])) {
+        if(!$m[3]) {
           $m[3] = $m[2]; // if no string then use the itemname
         }
-        $m[3] = trim($m[3], '"'); // get rid of quotes
-        $m[3] = preg_replace("/'/s", "&apos;", $m[3]); // make ' into &apos;
+        $m[3] = preg_replace(["/'s/", "/'|\"/"], ["&apos;s", ''], $m[3]); // make ' into &apos;
         $ar[$m[1]] .= "<option value=\"$m[2]\">$m[3]</option>";
       }
     }
@@ -362,7 +363,7 @@ EOF;
    * @return string the pages of the updateSwitch()
    */
    
-  public static function secondHalf($S, $h, $s, $startfilename=null) {
+  public static function secondHalf($S, $h, $s=null, $startfilename=null) {
     // Second half of SiteUpdate logic. There are two file: updatesite.php and updatesite2.php. 
     // There should be a site specific updatesite.php and updatesite2.php file
     // that sets up the site-class, the $h->title and $h->banner as well as
@@ -393,8 +394,6 @@ EOF;
       }
     }
     
-    // $s->siteclass is filled in by the caller!
-
     $s->siteclass = $S;
 
     // By adding $top and $S->footer to $s the constructor fills in $this->top and $this->footer
