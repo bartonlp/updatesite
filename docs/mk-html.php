@@ -51,5 +51,5 @@ code {
 pagetitle="Index";
 author="Barton Phillips: bartonphillips@gmail.com";
 
-/usr/bin/pandoc -Vpagetitle="$pagetitle" -Vauthor-meta="$author" -t html5 -Vhighlighting-css="$css" -s -f markdown_github index.md -o index.html
+/usr/bin/pandoc -Vpagetitle="$pagetitle" -Vauthor-meta="$author" -t html5 -Vhighlighting-css="$css" -s -f gfm index.md -o index.html
 
