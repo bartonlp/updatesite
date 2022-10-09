@@ -1,6 +1,6 @@
 # Update 2022-10-09: This is quite old.
 **I no longer support the *sqlite3* database in my SiteClass**.  
-**If you want to use this you will need to do come WORK to make it all work.**
+**If you want to use this you will need to do some WORK.**
 
 # UpdateSite Class
 
