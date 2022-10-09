@@ -1,3 +1,7 @@
+# Update 2022-10-09: This is quite old.
+**I no longer support the *sqlite3* database in my SiteClass**
+**If you want to use this you will need to do come WORK to make it all work.**
+
 # UpdateSite Class
 
 This class works with **SiteClass**. It creates sections or articles that can be placed within a webpage. The articles can be edited via a web browser and they are maintained in a database (MySql is prefered). Check out [SiteClass Documentation and Examples](https://bartonlp.github.io/site-class).
